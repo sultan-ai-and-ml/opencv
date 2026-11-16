@@ -13,23 +13,28 @@ if img is None:
 ## [empty]
 
 ## [imshow]
+## [imshow]
 cv.imshow("Display window", img)
 
-# Use a periodic wait loop to prevent the Python kernel from freezing
-# and allow the user to close the window via the 'X' button.
+# Use a timed loop to prevent the Python kernel from freezing
+k = 0
 while True:
-    k = cv.waitKey(100) & 0xFF # Timed wait for 100ms
+    k = cv.waitKey(100) & 0xFF
     
-    # Break if window is closed (works on most backends)
-    if cv.getWindowProperty("Display window", cv.WND_PROP_VISIBLE) < 1:
+    # If the window is closed, waitKey returns -1 on some backends, 
+    # but on others it just stops updating. We check for the 'X' button 
+    # using a try/except block for maximum portability.
+    try:
+        if cv.getWindowProperty("Display window", cv.WND_PROP_VISIBLE) < 1:
+            break
+    except cv.error:
         break
         
     # Break if Escape key is pressed
     if k == 27:
         break
+    
+    # Break if 's' is pressed to allow the save function to run
+    if k == ord("s"):
+        break
 ## [imshow]
-
-## [imsave]
-if k == ord("s"):
-    cv.imwrite("starry_night.png", img)
-## [imsave]
